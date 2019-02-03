@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import axios from 'axios';
-import './App.css';
+import validator from 'validator';
 
-const Redirect = ({ match }) => (
-    <div>
-        <h3>{ match.params.hash }</h3>
-    </div>
-);
+import Redirect from './components/Redirect';
+import './App.css';
 
 class App extends Component {
 
@@ -24,22 +21,27 @@ class App extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        console.log('URL is: ', this.state.url);
-        // Post values
-        axios.post('/api/shorten', {
-            url: this.state.url
-        })
-            .then(res => {
-                this.setState({
-                    link: res.data.hash
-                })
+        const validURL = validator.isURL(this.state.url, {
+            require_protocol: true
+        });
+        if (!validURL) {
+            alert('Please ensure the url is correct and includes the http(s) protocol.');
+        } else{
+            console.log('URL is: ', this.state.url);
+            // Post values
+            axios.post('/api/shorten', {
+                url: this.state.url
             })
-            .catch(function (error) {
-                console.log(error);
-            });
+                .then(res => {
+                    this.setState({
+                        link: `http://ufol.ink/${res.data.hash}`
+                    })
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     };
-
-
 
   render() {
     return (
@@ -55,7 +57,7 @@ class App extends Component {
                       <span id="link">{ this.state.link }</span>
                   </React.Fragment>
               )} />
-              <Route path='/:hash' component={Redirect} exact />
+              <Route path="/:hash" component={Redirect} exact />
           </div>
         </Router>
     );

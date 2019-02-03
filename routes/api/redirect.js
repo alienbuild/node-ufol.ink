@@ -12,13 +12,15 @@ router.get('/test', (req, res) => res.json({msg: "Redirect Test API working"}));
 // @access  Public
 router.get('/',(req, res) => {
     const hash = req.headers.hash;
-    URL.findOne({ _id: hash }, function(err,doc){
-        if (doc) {
-            res.json({ url: doc.url })
-        } else{
-            res.json({ url: 'not found'})
-        }
-    });
+
+    URL.findOne({ _id: hash })
+        .then((doc) => {
+            return res.json({ url: doc.url })
+        })
+        .catch((err) => {
+            return res.status(400).json({error: 'Sorry, this link may have expired.'});
+        });
+
 });
 
 module.exports = router;

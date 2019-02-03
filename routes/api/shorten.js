@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const btoa = require('btoa');
+const uniqid = require('uniqid');
 
 // Load URL model
 const URL = require('../../models/Urls');
@@ -25,20 +25,21 @@ router.post('/',(req, res, next) => {
             console.log('entry found in db');
             res.send({
                 url: urlData,
-                hash: btoa(doc._id),
+                hash: url._id,
                 status: 200,
                 statusTxt: 'OK'
             });
         } else {
             console.log('entry NOT found in db, saving new');
             var url = new URL({
+                _id: uniqid(),
                 url: urlData
             });
             url.save(function(err) {
                 if(err) return console.error(err);
                 res.send({
                     url: urlData,
-                    hash: btoa(url._id),
+                    hash: url._id,
                     status: 200,
                     statusTxt: 'OK'
                 });

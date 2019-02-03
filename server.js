@@ -28,8 +28,7 @@ app.use('/api/shorten', shorten);
 
 // Redirect
 app.get('/:hash', function(req, res) {
-    const baseid = req.params.hash;
-    const id = atob(baseid);
+    const id = req.params.hash;
     URL.findOne({ _id: id }, function(err, doc) {
         if(doc) {
             res.redirect(doc.url);

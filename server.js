@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 // Load URL model
 const URL = require('./models/Urls');
@@ -26,6 +27,16 @@ app.use('/api/shorten', shorten);
 
 const redirect = require('./routes/api/redirect');
 app.use('/api/redirect', redirect);
+
+// Serve static assets if in productions
+if (process.env.NODE_ENV === 'production' ) {
+    // Set static folder
+    app.use(express.static('client/build'));
+    // Load static file
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+}
 
 // Start server
 const port = process.env.PORT || 5000;

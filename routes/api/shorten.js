@@ -26,7 +26,7 @@ router.post('/',(req, res, next) => {
             console.log('entry found in db');
             res.send({
                 url: urlData,
-                hash: url._id,
+                hash: doc._id,
                 status: 200,
                 statusTxt: 'OK'
             });
